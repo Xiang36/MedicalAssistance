@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>nativeDroid II - jQueryMobile Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
+    <link rel="stylesheet" href="/vendor/waves/waves.min.css" />
+    <link rel="stylesheet" href="/vendor/wow/animate.css" />
+    <link rel="stylesheet" href="/css/nativedroid2.css" />
+
+    <style>
+        /* Prevent FOUC */
+
+        body {
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <div data-role="page">
+        <nd2-include data-src="/pages/fragments/panel.left.html"></nd2-include>
+        <div data-role="header" data-position="fixed" class="wow fadeIn">
+            <a href="#leftpanel" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay='0.8s'><i class="zmdi zmdi-menu"></i></a>
+            <h1 class="wow fadeIn" data-wow-delay='0.4s'>裝置清單</h1>
+        </div>
+        <div role="main" class="ui-content wow fadeIn" data-inset="false" data-wow-delay="0.2s">
+            <ul data-role="listview" data-icon="false" id="result">
+            </ul>
+						<hr />
+				    <a href="/pages/createNewPerson.html" class="ui-btn ui-btn-raised clr-warning">
+				     <center>
+				      <i class='zmdi zmdi-plus'></i> 新增病患
+				     </center>
+				    </a>
+				   <hr />
+        </div>
+    </div>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+    <script src="/vendor/waves/waves.min.js"></script>
+    <script src="/vendor/wow/wow.min.js"></script>
+    <script src="/js/nativedroid2.js"></script>
+    <script src="/nd2settings.js"></script>
+
+    <script>
+      $.ajax({
+        type: 'GET',
+        url: 'http://140.120.54.104/DrPulse/DrPulse/api/PatientData/GetAll',
+        dataType: 'json',
+        async: false,
+        success: function(data){
+          console.log(data);
+          // result.innerHTML = data[0].location;
+          result.innerHTML = "<li data-role='list-divider'>病患列表</li>";
+          for(var i in data)
+          {
+            result.innerHTML +=
+            "<li><a onclick = 'choosePerson(" + data[i].id + ")' href='#popupDialog' data-rel='popup' data-position-to='window' data-transition='pop'><img src='"+
+            "https://cdn1.iconfinder.com/data/icons/unique-round-blue/93/user-512.png'" +
+            "class='ui-thumbnail ui-thumbnail-circular' />"+
+            "<h2>"+ data[i].name +"</h2>"+
+            "<p>age："+ data[i].sex +"</p></a></li>";
+          }
+        },
+        error: function(){
+          console.log('failed.');
+        }
+      });
+			function choosePerson(id){
+				console.log(id)
+				window.location.assign("/pages/realtime.html?id=" + id , "_self");
+			}
+    </script>
+</body>
+
+</html>

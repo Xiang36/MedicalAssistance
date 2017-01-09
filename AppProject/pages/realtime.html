@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>nativeDroid II - jQueryMobile Template</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.css" />
+		<link rel="stylesheet" href="/vendor/waves/waves.min.css" />
+		<link rel="stylesheet" href="/vendor/chartist/style.css" />
+		<link rel="stylesheet" href="/css/nativedroid2.css" />
+
+				<style>
+					/* Prevent FOUC */
+					body { opacity: 0; }
+				</style>
+
+	</head>
+	<body>
+
+		<div data-role="page"  class="nd2-no-menu-swipe">
+
+			<nd2-include data-src="/pages/fragments/panel.left.html"></nd2-include>
+
+
+
+			<div data-role="header" data-position="fixed" class="wow fadeIn">
+				<a href="#leftpanel" class="ui-btn ui-btn-left"><i class="zmdi zmdi-menu"></i></a>
+				<h1 class="wow fadeIn" data-wow-delay='0.4s'>病患資訊</h1>
+
+				<ul data-role="nd2tabs" data-swipe="true">
+					<li data-tab="basedata" data-tab-active="true">基本資料</li>
+					<li data-tab="realtime">即時資訊</li>
+					<li data-tab="history">歷史資訊</li>
+				</ul>
+
+			</div>
+
+			<div role="main" class="ui-content" data-inset="false">
+				<div data-role="nd2tab" data-tab="basedata">
+						<ul data-role="listview" data-icon="false">
+							<li>
+								<a href="#">
+									<h2>姓名</h2>
+									<p>賴董</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<h2>性別</h2>
+									<p>男</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<h2>年齡</h2>
+									<p>23</p>
+								</a>
+							</li>
+							<li>
+								<a href="#">
+									<h2>床位</h2>
+									<p>5566</p>
+								</a>
+							</li>
+						</ul>
+					</div>
+				<div data-role="nd2tab" data-tab="realtime">
+						<div class="row">
+							<span class="nd2-title">點滴重量</span>
+							<div class="col-xs-12 col-md-4">
+								<div class="box">
+									<div class="nd2-chart ct-chart" id = "weightChart"></div>
+								</div>
+							</div>
+							<span class="nd2-title">患者心跳</span>
+							<div class="col-xs-12 col-md-4">
+								<div class="box">
+									<div class="nd2-chart ct-chart" id = "rateChart"></div>
+								</div>
+							</div>
+						</div>
+			</div>
+
+			<div data-role="nd2tab" data-tab="history">
+					<div class="row">
+								<span class="nd2-title">點滴重量消耗歷史平均</span>
+								<div class="col-xs-12 col-md-4">
+									<p>asdfs</p>
+								</div>
+								<span class="nd2-title">點滴速率歷史平均</span>
+								<div class="col-xs-12 col-md-4">
+									<div class="box">
+										<div class="nd2-chart ct-chart" id = "chart"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+		</div>
+
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+		<script src="//code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquerymobile/1.4.5/jquery.mobile.min.js"></script>
+		<script src="/vendor/waves/waves.min.js"></script>
+		<script src="/vendor/chartist/chartist.min.js"></script>
+		<script src="/js/nativedroid2.js"></script>
+		<script src="/nd2settings.js"></script>
+		<script src="http://code.highcharts.com/highcharts.js"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function () {
+          setInterval(function() {//更新
+              $.ajax({
+                  url: 'http://140.120.54.104/DrPulse/DrPulse/api/InjectionData/GetAll',
+                  type: 'GET',
+                  dataType: 'json',				//data format
+                  success: function(data)		  //on recieve of reply
+                  {
+                      var time = [];
+                      var weightVal = [];
+                      var rateVal = [];
+                      console.log(data);
+                      //for (var i = 0, len = data.length; i < len; i++)
+                      for (var i = 20, len = data.length; i >0; i--)
+                      {
+                          time.push(data[len-i]["time"]);
+                          weightVal.push(parseFloat(data[len-i]["weight"]));
+                          rateVal.push(parseFloat(data[len-i]["rate"]) / 10);
+                      }
+											$('#weightChart').highcharts({
+                          title: {
+                              text: '',
+                              x: -20 //center
+                          },
+                          subtitle: {
+                              text: '',
+                              x: -20
+                          },
+                          xAxis: {
+                              title: {
+                              text: 'Time'
+                              },
+                              categories: time
+                          },
+                          yAxis: {
+                              title: {
+                              text: '點滴重量數值'
+                              },
+                          },
+                          series: [{
+                              name: '點滴重量（公克）',
+                              data: weightVal
+                          }]
+                      });//end highchart
+                      $('#rateChart').highcharts({
+                          title: {
+                              text: '',
+                              x: -20 //center
+                          },
+                          subtitle: {
+                              text: '',
+                              x: -20
+                          },
+                          xAxis: {
+                              title: {
+                              text: 'Time'
+                              },
+                              categories: time
+                          },
+                          yAxis: {
+                              title: {
+                              text: '心跳數值'
+                              },
+                          },
+                          series: [{
+                              name: '心跳速度（分）',
+                              data: rateVal
+                          }]
+                      });//end highchart
+                  }
+              });//end ajax
+          }, 5000);//更新秒數
+      });
+		</script>
+
+
+	</body>
+</html>
